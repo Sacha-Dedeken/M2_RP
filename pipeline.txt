@@ -1,0 +1,42 @@
+
+0) Dataset analysis
+
+ - Localisation, type of exam and type of patients
+ - Number of devices
+ - Number of patients
+ - Patient auxiliary covariates
+ - Targets
+ - Variability in data
+
+1) Pre-process the data
+
+ - Mask on the organ and the ROI
+ - Standardization / Z-score based on organ or ROI
+ - Normalization / [0,1] based on organ or ROI
+ - Discretization / [0, 32] based on organ or ROI
+ - Histograms extractions
+ - Train-test split (on each device)
+
+D1_T, D1_E, D2_T, D2_E (training / evaluation)
+
+2) GAN Training
+
+ - Propose a GAN architecture
+ - Train it on D1_T+D1_E, D2_T
+ - Input D2_T, D2_E and generate D2_T_G, D2_E_G
+
+3) Sanity check
+
+- Measure D2_TE_mean (source), D1_TE_mean (target), D2_T_G_mean (train gen), D2_E_G_mean (eval gen)
+- Check if the score (based on chi-square distance) is positive (necessary, not sufficient)
+
+4) Radiomics Extraction
+
+ - Extract radiomics from all sub datasets (D1 -> R1, for radiomics), to answer following questions:
+	* R1_T : "does the classifier is good on its training data?" 
+	* R1_E : "does the classificer is good on new data from the same device?"
+	* R2_T+R2_E : "does the classifier is good on new data from a different device without harmonization?"
+	* R2_T_G : "does the classifier is good on new data harmonized, from the GAN training data?"
+	* R2_E_G : "does the classifier is good on new data harmonized, unseen by the GAN in training phase?"
+ - Train a classifier with R1_T, evaluate its accuracy on all sub datasets radiomic
+ - Conclude absolute and relative performances, with or without harmonization
